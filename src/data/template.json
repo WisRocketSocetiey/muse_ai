@@ -1,0 +1,47 @@
+[
+  {
+    "title": "Untitled Track 1",
+    "album": "Sample Album",
+    "year": 2025,
+    "artist": "Sample Artist",
+    "type": "Hip-Hop / Rap",
+    "themes": [
+      "Personal growth",
+      "Overcoming challenges",
+      "Self-expression",
+      "Creativity",
+      "Ambition"
+    ],
+    "lyrics": "[Verse 1]\nI came from the bottom, now I'm reaching for the light\nEvery setback just another reason I fight\nDreams in my mind, yeah, they burnin' all night\nTurning every wrong into something that's right\n\n[Chorus]\nWe rise, no matter the fall\nKeep pushin' till we break through it all\nFrom the streets to the stars, we gon' crawl\nUntil the dream feels ten feet tall"
+  },
+  {
+    "title": "Untitled Track 2",
+    "album": "Sample Album",
+    "year": 2025,
+    "artist": "Sample Artist",
+    "type": "Pop",
+    "themes": [
+      "Love",
+      "Relationships",
+      "Hope",
+      "Dreams",
+      "Connection"
+    ],
+    "lyrics": "[Verse 1]\nWe met under the silver moonlight\nYour hand in mine felt so right\nEvery laugh was a melody\nNow the world feels like it's meant for me\n\n[Chorus]\nStay with me, we'll chase the dawn\nWe'll write our story, keep moving on\nNo matter the night, our light will shine\nYou and me till the end of time"
+  },
+  {
+    "title": "Untitled Track 3",
+    "album": "Sample Album",
+    "year": 2025,
+    "artist": "Sample Artist",
+    "type": "Rock",
+    "themes": [
+      "Freedom",
+      "Rebellion",
+      "Energy",
+      "Youth",
+      "Independence"
+    ],
+    "lyrics": "[Intro]\nCrank the amps, let the thunder roll\nFeel the fire deep inside your soul\n\n[Verse 1]\nWe’re breaking chains, no turning back\nRunning wild on a midnight track\nEvery shout is a battle cry\nWith the wind and the sparks flying high\n\n[Chorus]\nRaise your voice, let the walls come down\nWe own this night, we own this town\nEvery heart beats loud and free\nRock and roll's our destiny"
+  }
+]

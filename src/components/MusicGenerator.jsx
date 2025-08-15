@@ -77,10 +77,6 @@ export default function MusicGenerator() {
 
   return (
     <div className="music-generator-container">
-      <div className="music-header">
-        <h2>Music Generator</h2>
-        <p>Create AI-generated music tracks with customizable parameters</p>
-      </div>
 
       <div className="generator-content">
         {/* Generation Controls */}

@@ -1,4 +1,4 @@
-// Lyrics.jsx (refactored: keep Sidebar + Themes; delegate editor to LyricsReader)
+// Lyrics.jsx — Editor + Saved Songs (uses LyricsReader for the editor UI)
 import React, { useState, useEffect } from 'react';
 import styles from './Lyrics.module.css';
 import LyricHelper from '../utils/lyricHelper';
@@ -7,32 +7,32 @@ import { useSongLoader } from '../utils/useSongLoader';
 import LyricsReader from './LyricsReader';
 
 export default function Lyrics() {
-  // Sidebar / library state
+  // Saved songs + generation context
   const [savedSongs, setSavedSongs] = useState([]);
   const [themes, setThemes] = useState([]);
+
+  // Current doc shown in the reader
   const [currentDoc, setCurrentDoc] = useState({
     title: '',
-    artist: '',
-    album: '',
-    year: '',
+    artistStyle: '',
     genre: '',
     lyrics: '',
   });
-  const [isGenerating, setIsGenerating] = useState(false);
 
-  // Seed from src/data/template.json via useSongLoader
+  // UX state
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [genError, setGenError] = useState('');
+
+  // Seed from src/data/template.json
   const { allTemplates } = useSongLoader();
 
-  // Seed ALL entries from src/data/template.json into Saved Songs on first load
   useEffect(() => {
     if (savedSongs.length === 0 && Array.isArray(allTemplates) && allTemplates.length) {
       const seeded = allTemplates.map((t, i) => ({
         id: `seed-${i}-${Date.now()}`,
         title: t.title || 'Untitled',
-        artist: t.artist || 'Unknown Artist',
+        artistStyle: t.artistStyle || t.artist || 'Unspecified style',
         genre: t.genre || t.type || 'Unspecified',
-        album: t.album || '',
-        year: t.year || new Date().getFullYear(),
         themes: Array.isArray(t.themes) ? t.themes : [],
         lyrics: t.lyrics || '',
         createdAt: new Date().toLocaleDateString(),
@@ -41,21 +41,32 @@ export default function Lyrics() {
     }
   }, [allTemplates, savedSongs.length]);
 
-  // Generation driven by themes
+  // Generate lyrics using Worker (/api/open)
   const handleGenerate = async () => {
+    if (isGenerating) return '';
+    setGenError('');
     setIsGenerating(true);
     try {
-      const text = await generateLyrics(themes);
-      return text; // LyricsReader will set its own textarea
+      const text = await generateLyrics(themes, {
+        title: currentDoc.title,
+        artistStyle: currentDoc.artistStyle,
+        genre: currentDoc.genre,
+      });
+
+      // hydrate parent state so sidebar preview stays accurate
+      setCurrentDoc((prev) => ({ ...prev, lyrics: text || '' }));
+      return text || '';
     } catch (err) {
       console.error('Generation failed:', err);
-      return '';
+      const msg = String(err?.message || 'Generation failed');
+      setGenError(msg);
+      return msg;
     } finally {
       setIsGenerating(false);
     }
   };
 
-  // Save from the Reader
+  // Save current doc from the reader
   const handleSave = (doc) => {
     if (!doc?.title || !doc?.lyrics) return;
     const newSong = {
@@ -66,32 +77,24 @@ export default function Lyrics() {
     };
     setSavedSongs((prev) => [newSong, ...prev]);
     setCurrentDoc(newSong);
-    // optional: toast/alert
   };
 
-  // Load a song into the Reader
+  // Load a saved song into the editor
   const loadSong = (song) => {
     setCurrentDoc({
       title: song.title || '',
-      artist: song.artist || '',
-      album: song.album || '',
-      year: song.year?.toString?.() || '',
+      artistStyle: song.artistStyle || '',
       genre: song.genre || '',
       lyrics: song.lyrics || '',
     });
+    // If you want to sync the themes from the saved song, uncomment:
+    // setThemes(Array.isArray(song.themes) ? song.themes : []);
   };
 
   const deleteSong = (songId) => {
     setSavedSongs((prev) => prev.filter((song) => song.id !== songId));
     if (currentDoc?.id === songId) {
-      setCurrentDoc({
-        title: '',
-        artist: '',
-        album: '',
-        year: '',
-        genre: '',
-        lyrics: '',
-      });
+      setCurrentDoc({ title: '', artistStyle: '', genre: '', lyrics: '' });
     }
   };
 
@@ -106,22 +109,20 @@ export default function Lyrics() {
 
   return (
     <div className={styles.lyricsContainer}>
-      <div className={styles.lyricsHeader}>
-        <h2>Lyrics Studio</h2>
-        <p>Create, edit, and manage your song lyrics with AI assistance</p>
-      </div>
-
       <div className={styles.lyricsContent}>
-        {/* Editor Column: Themes + Reader (no duplicate editor code) */}
+        {/* Left: Themes + Reader */}
         <div className={styles.editorColumn}>
-          {/* Themes Section stays here (generation context) */}
           <div className={styles.themesSection}>
-            <h4>Themes</h4>
+            <h4>THEMES</h4>
             <div className={styles.themesContainer}>
               {themes.map((theme, index) => (
                 <span key={index} className={styles.themeTag}>
                   {theme}
-                  <button onClick={() => removeTheme(theme)} className={styles.removeTheme}>
+                  <button
+                    onClick={() => removeTheme(theme)}
+                    className={styles.removeTheme}
+                    title="Remove theme"
+                  >
                     ×
                   </button>
                 </span>
@@ -140,9 +141,8 @@ export default function Lyrics() {
             </div>
           </div>
 
-          {/* Delegate editor window to LyricsReader */}
           <LyricsReader
-            embed                 // <---- NEW: no duplicate header/container
+            embed
             showGenerate
             showSave
             initial={currentDoc}
@@ -152,11 +152,11 @@ export default function Lyrics() {
             getStatistics={LyricHelper.getStatistics}
           />
 
-          {/* Optional UX: reflect generate button busy state */}
           {isGenerating && <div className={styles.generatingNote}>Generating…</div>}
+          {genError && <div className={styles.errorNote}>{genError}</div>}
         </div>
 
-        {/* Saved Songs Sidebar (unchanged) */}
+        {/* Right: Saved Songs */}
         <div className={styles.savedSongs}>
           <div className={styles.sidebarHeader}>
             <h3>Saved Songs ({savedSongs.length})</h3>
@@ -169,12 +169,15 @@ export default function Lyrics() {
               savedSongs.map((song) => (
                 <div key={song.id} className={styles.songItem}>
                   <h4>{song.title}</h4>
-                  <p>{song.artist} • {song.genre}</p>
-                  {song.album && <p className={styles.albumInfo}>{song.album} ({song.year})</p>}
+                  <p>
+                    {song.artistStyle} • {song.genre}
+                  </p>
                   {song.themes && song.themes.length > 0 && (
                     <div className={styles.songThemes}>
                       {song.themes.slice(0, 3).map((theme, i) => (
-                        <span key={i} className={styles.miniTheme}>{theme}</span>
+                        <span key={i} className={styles.miniTheme}>
+                          {theme}
+                        </span>
                       ))}
                       {song.themes.length > 3 && (
                         <span className={styles.moreThemes}>+{song.themes.length - 3}</span>
@@ -183,10 +186,10 @@ export default function Lyrics() {
                   )}
                   <span className={styles.date}>{song.createdAt}</span>
                   <div className={styles.songActions}>
-                    <button onClick={() => loadSong(song)} className={styles.btnLoad}>
+                    <button onClick={() => loadSong(song)} className={styles.btnLoad} disabled={isGenerating}>
                       Load
                     </button>
-                    <button onClick={() => deleteSong(song.id)} className={styles.btnDelete}>
+                    <button onClick={() => deleteSong(song.id)} className={styles.btnDelete} disabled={isGenerating}>
                       Delete
                     </button>
                   </div>

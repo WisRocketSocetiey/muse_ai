@@ -2,9 +2,29 @@
 
 .dashboardContainer {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: url('../../assets/background.png') center center / cover no-repeat,
+              linear-gradient(135deg, #0f0f23 0%, #1a1a2e 30%, #16213e 60%, #0f0f23 100%);
   padding: 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.dashboardContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dashboardContainer > * {
+  position: relative;
+  z-index: 1;
 }
 
 .dashboardHeader {
@@ -18,18 +38,20 @@
   font-weight: 700;
   color: white;
   margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(45deg, #ffffff, #f0f0f0);
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 4px 8px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, #ffffff 0%, #e8e8e8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  letter-spacing: -0.02em;
 }
 
 .dashboardSubtitle {
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0.5rem 0 0 0;
-  font-weight: 300;
+  font-weight: 400;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Navigation Tabs */
@@ -44,32 +66,54 @@
 .navTab {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 25px;
-  color: white;
+  gap: 0.75rem;
+  padding: 1.2rem 2.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), 
+              0 1px 3px rgba(0, 0, 0, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+.navTab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .navTab:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 
+              0 2px 6px rgba(0, 0, 0, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .navTab.activeTab {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2), 
+              0 2px 8px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+  color: white;
 }
 
 .tabIcon {
@@ -83,12 +127,14 @@
 }
 
 .workerDetails {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 12px;
-  padding: 1rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.2rem;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .workerSummary {
@@ -102,61 +148,99 @@
 }
 
 .workerSummary:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .workerResponse {
   margin-top: 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 1.2rem;
   border-radius: 8px;
-  color: #f0f0f0;
-  font-family: 'Courier New', monospace;
+  color: #d0d0d0;
+  font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
   font-size: 0.85rem;
   line-height: 1.4;
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /* Feature Container */
 .featureContainer {
   max-width: 1200px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 
+              0 4px 20px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   min-height: 600px;
+  position: relative;
+}
+
+.featureContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 /* Legacy support for old feature sections */
 .featureSection {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
   padding: 2rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.featureSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .featureSection:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .featureSection h2 {
-  color: #333;
+  color: white;
   margin-top: 0;
   margin-bottom: 1rem;
   font-size: 1.8rem;
   font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .featureSection p {
-  color: #666;
+  color: rgba(255, 255, 255, 0.75);
   font-size: 1rem;
   line-height: 1.6;
   margin: 0;

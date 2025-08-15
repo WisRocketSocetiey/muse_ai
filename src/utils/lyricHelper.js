@@ -35,7 +35,8 @@ export class LyricHelper {
       totalWords: parsedLyrics.wordCount,
       totalLines: parsedLyrics.lineCount,
       totalSections: parsedLyrics.sections.length,
-      formattedDuration: this.formatDuration(estimatedDuration)
+      // ✅ Fixed: reference class name instead of `this`
+      formattedDuration: LyricHelper.formatDuration(estimatedDuration)
     };
   }
 

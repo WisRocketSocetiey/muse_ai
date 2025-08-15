@@ -1,12 +1,15 @@
-/* LyricsReader.module.css — all editor-specific styles */
+/* LyricsReader.module.css – all editor-specific styles */
 
-/* Container to optionally constrain width if needed */
 .readerContainer {
-  max-width: 780px; /* adjust to taste */
+  max-width: 780px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* fill column */
+  min-height: 0; /* allow shrink inside flex parent */
+  height: 100%; /* ADDED: ensure full height */
 }
 
-/* Song Metadata */
 .songMetadata {
   margin-bottom: 1.5rem;
   flex-shrink: 0;
@@ -18,9 +21,7 @@
   margin-bottom: 1rem;
 }
 
-.metadataRow:last-child {
-  margin-bottom: 0;
-}
+.metadataRow:last-child { margin-bottom: 0; }
 
 .inputField {
   padding: 0.875rem 1rem;
@@ -38,20 +39,12 @@
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
-.titleInput {
-  flex: 2;
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
+.titleInput { flex: 2; font-weight: 600; font-size: 1.1rem; }
 .artistInput { flex: 1; }
 .albumInput { flex: 1; }
 .yearInput  { flex: 1; max-width: 100px; }
-
-/* Free-text genre for reader */
 .genreInput { width: 100%; }
 
-/* Toolbar */
 .editorToolbar {
   display: flex;
   gap: 0.75rem;
@@ -107,7 +100,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Stats */
 .lyricsStats {
   display: flex;
   gap: 1rem;
@@ -118,27 +110,33 @@
   margin-bottom: 0.75rem;
 }
 
-/* Editor window */
 .editorWrapper {
-  flex: 1;
-  min-height: 0;
+  flex: 1; /* fill remaining space */
+  min-height: 0; /* allow textarea shrink */
   display: flex;
   flex-direction: column;
+  /* ADDED: Ensure wrapper doesn't exceed container */
+  overflow: hidden;
 }
 
 .lyricsEditor {
   flex: 1;
   width: 100%;
+  /* REMOVED: min-height: 320px; - this was causing issues */
+  height: 100%; /* ADDED: Use full height of wrapper */
   padding: 1.5rem;
   border: 2px solid #e1e5e9;
   border-radius: 12px;
   font-size: 1rem;
   line-height: 1.7;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  resize: none;
+  resize: none; /* Keep this to prevent manual resizing */
   background: #fafbfc;
   transition: all 0.3s ease;
-  overflow-y: auto;
+  overflow-y: auto; /* Allow scrolling within the fixed height */
+  box-sizing: border-box;
+  /* ADDED: Prevent textarea from expanding beyond container */
+  max-height: 100%;
 }
 
 .lyricsEditor:focus {
@@ -153,12 +151,11 @@
   font-style: italic;
 }
 
-/* -------------------- Responsive -------------------- */
 @media (max-width: 768px) {
   .metadataRow { flex-direction: column; gap: 0.75rem; }
   .editorToolbar { gap: 0.5rem; }
   .btn { padding: 0.625rem 1rem; font-size: 0.9rem; }
-  .editorWrapper { min-height: 250px; }
+  /* REMOVED: .lyricsEditor { min-height: 250px; } */
 }
 
 @media (max-width: 480px) {
